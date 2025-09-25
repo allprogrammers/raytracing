@@ -1,6 +1,7 @@
 #include "color.h"
 #include "ray.h"
 #include "vec3.h"
+#include "sphere.h"
 
 #include <iostream>
 
@@ -22,8 +23,13 @@ double hit_sphere(const point3 &center, double radius, const ray &r)
 color ray_color(const ray &r)
 {
     auto sphere_center = point3(0, 0, -1);
-    auto t = hit_sphere(sphere_center, 0.5, r);
-    if (t > 0.0)
+    sphere current_sphere = sphere(sphere_center, 0.5);
+
+    hit_record hitrec;
+    bool hitted = current_sphere.hit(r, 0, 100, hitrec);
+    double t = hitrec.t;
+
+    if (hitted && t > 0.0)
     {
         vec3 N = unit_vector(r.at(t) - sphere_center);
         return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
